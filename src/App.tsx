@@ -1,22 +1,35 @@
 import {useEffect, useState} from "react";
 import RepoCard from "./RepoCard.tsx";
 
+interface RepoListItem {
+  name: string,
+  description: string,
+  language: string,
+  html_url: string
+}
+
+interface JSONResponse{
+  incomplete_result: boolean,
+  items: Array<RepoListItem>,
+  total_count: number
+}
+
 function App() {
 
   const [repoName, setRepoName] = useState("");
   const [searchQuery, setSearchQuery] = useState("tetris");
-  const [response, setResponse] = useState();
+  const [response, setResponse] = useState<JSONResponse>();
 
 
   useEffect(() => {
-    let responseJSON;
+    let responseJSON: JSONResponse | undefined;
     fetch(`https://api.github.com/search/repositories?q=${searchQuery}`, {headers: {
       'Accept': 'application/vnd.github.v3+json'}
     }).then(async (r) =>
     {
       responseJSON = await r.json();
       console.log(responseJSON);
-      setResponse(responseJSON !== undefined ? responseJSON : response);
+      setResponse(r => (responseJSON !== undefined ? responseJSON : r));
     });
 
   }, [searchQuery]);
@@ -40,9 +53,10 @@ function App() {
                 onClick={handleSubmit}>Search</button>
       </div>
       <div className="col-span-2 lg:grid xl:grid-cols-4 md:grid-cols-3 overflow-y-scroll h-screen">
-        {response !== undefined ? (response.items !== undefined ? response.items.map((item, index:number) =>
+        {response !== undefined ? (response.items !== undefined ? response.items.map((item:RepoListItem, index:number) =>
             <RepoCard key={index} repoName={item.name} repoDesc={item.description} repoLang={item.language} repoLink={item.html_url}/>)
-            : <p>Error occurred</p>) : <p>Fetching</p>}
+            : <p className="place-self-center xl:col-span-4 md:col-span-3 text-2xl">Nothing Found</p>) :
+            <p className="place-self-center xl:col-span-4 md:col-span-3 text-2xl">Fetching</p>}
       </div>
     </div>
   );
