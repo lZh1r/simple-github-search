@@ -2,10 +2,11 @@
 
 @theme {
     --color-back: #1e1e1e;
+    --shadow-fade: 0 -10px 18px 0 rgba(30, 41, 57, 0.51);
 }
 
 html {
     body {
-        background-color: #1e1e1e;
+        background-color: #1c1c2b;
     }
 }

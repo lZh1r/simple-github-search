@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import RepoCard from "./RepoCard.tsx";
 
 function App() {
 
@@ -6,15 +7,18 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("tetris");
   const [response, setResponse] = useState();
 
+
   useEffect(() => {
+    let responseJSON;
     fetch(`https://api.github.com/search/repositories?q=${searchQuery}`, {headers: {
       'Accept': 'application/vnd.github.v3+json'}
     }).then(async (r) =>
     {
-      const j = await r.json()
-      setResponse(j);
-      console.log(j)
+      responseJSON = await r.json();
+      console.log(responseJSON);
+      setResponse(responseJSON !== undefined ? responseJSON : response);
     });
+
   }, [searchQuery]);
 
   function handleSubmit() {
@@ -25,7 +29,7 @@ function App() {
 
   return (
     <div className="lg:grid grid-cols-3 text-white">
-      <div className="border-r-2 border-r-gray-200 border-solid h-screen flex flex-col justify-center">
+      <div className="lg:border-r-2 lg:border-r-gray-200 border-solid h-screen flex flex-col justify-center">
         <input type="text"
                placeholder="Enter Repository Name"
                value={repoName}
@@ -35,8 +39,10 @@ function App() {
           text-xl self-center mt-10 p-2 cursor-pointer hover:bg-gray-500 bg-gray-800"
                 onClick={handleSubmit}>Search</button>
       </div>
-      <div className="col-span-2">
-        {response !== undefined ? response.items.map((item, index:number) => <p key={index}>{item.name}</p>) : <p>Fetching</p>}
+      <div className="col-span-2 lg:grid xl:grid-cols-4 md:grid-cols-3 overflow-y-scroll h-screen">
+        {response !== undefined ? (response.items !== undefined ? response.items.map((item, index:number) =>
+            <RepoCard key={index} repoName={item.name} repoDesc={item.description} repoLang={item.language} repoLink={item.html_url}/>)
+            : <p>Error occurred</p>) : <p>Fetching</p>}
       </div>
     </div>
   );
