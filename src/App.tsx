@@ -41,8 +41,9 @@ function App() {
   }
 
   return (
-    <div className="lg:grid grid-cols-3 text-white">
-      <div className="lg:border-r-2 lg:border-r-gray-200 border-solid h-screen flex flex-col justify-center">
+    <div className="lg:grid grid-cols-3 text-white max-lg:w-fit max-lg:place-self-center">
+      <div className="lg:border-r-2 lg:border-r-gray-200 border-solid
+      max-lg:pt-10 max-lg:pb-10 lg:h-screen flex flex-col justify-center">
         <input type="text"
                placeholder="Enter Repository Name"
                value={repoName}
